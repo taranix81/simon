@@ -1,31 +1,26 @@
-package org.taranix.cli.simon.configuration;
+package org.taranix.cli.simon.gemini;
 
 import com.google.genai.Client;
 import org.taranix.cafe.beans.annotations.CafeFactory;
 import org.taranix.cafe.beans.annotations.CafeProperty;
 import org.taranix.cafe.beans.annotations.CafeProvider;
 import org.taranix.cli.simon.variables.ModelAiVariable;
-import org.taranix.cli.simon.variables.PathVariable;
 
 @CafeFactory
-class AIClientConfiguration {
+class GeminiConfiguration {
 
     @CafeProperty(name = "apikey")
     private String apiKey;
 
     @CafeProvider
-    Client client() {
+    Client geminiClient() {
         return Client.builder().apiKey(apiKey).build();
     }
 
     @CafeProvider
-    ModelAiVariable defaultModelAI() {
+    ModelAiVariable geminiDefaultModelAI() {
         return ModelAiVariable.asDefault("gemini-2.5-flash");
     }
 
 
-    @CafeProvider
-    PathVariable defaultPath() {
-        return PathVariable.adDefault();
-    }
 }

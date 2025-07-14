@@ -1,24 +1,28 @@
-package org.taranix.cli.simon.services;
+package org.taranix.cli.simon.console;
 
+import org.apache.commons.lang3.StringUtils;
 import org.taranix.cli.simon.exceptions.ConsoleInterpreterException;
-import org.taranix.cli.simon.utils.CafeConsoleTextColour;
 
 import java.io.Console;
 
-public class ConsoleHandler {
+public class ConsoleInterpreter {
 
 
     public static final String PROMPT_LINE = ">> ";
-    public static final String PROMPT_BLOCK_LINE = "[Block] >> ";
+
     public static final String MULTI_LINE_BLOCK_MODE = "#multi";
     public static final String NEW_LINE = "\n";
+    public static final String EXIT = "#exit";
+    public static final String QUIT = "#quit";
+    public static final String BYE = "bye";
+    private static final String HELP = "#help";
 
 
-    private String blockRead(Console console) {
+    private String readBlock(Console console) {
         StringBuilder block = new StringBuilder();
 
         while (true) {
-            String inputLine = readLine(console, PROMPT_BLOCK_LINE);
+            String inputLine = readLine(console, StringUtils.EMPTY);
             if (isExit(inputLine)) {
                 break;
             }
@@ -46,16 +50,38 @@ public class ConsoleHandler {
         }
 
         if (isMultiLineBlock(inputLine)) {
-            return blockRead(console);
+            return readBlock(console);
+        }
+
+        if (isHelp(inputLine)) {
+            printHelp();
+            return read();
         }
 
         return inputLine;
     }
 
+    private void printHelp() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(NEW_LINE);
+        sb.append(CafeConsoleTextColour.YELLOW.getAnsiColour());
+        sb.append(HELP + ": Print Help" + NEW_LINE);
+        sb.append(MULTI_LINE_BLOCK_MODE + ": Enter into multi line mode" + NEW_LINE);
+        sb.append(EXIT + ": Exit from multi line mode" + NEW_LINE);
+        sb.append(NEW_LINE);
+        sb.append(NEW_LINE);
+        System.out.println(sb);
+    }
+
+    private boolean isHelp(String inputLine) {
+        String lowerCaseInput = inputLine.toLowerCase().trim();
+        return lowerCaseInput.equals(HELP);
+    }
+
     private Console getConsole() {
         Console console = System.console();
         if (console == null) {
-            throw new ConsoleInterpreterException("Brak dostępu do konsoli. Spróbuj uruchomić z linii poleceń.");
+            throw new ConsoleInterpreterException("Console access denied. Try running from the command line.");
         }
         return console;
     }
@@ -66,11 +92,11 @@ public class ConsoleHandler {
 
     private boolean isExit(String inputLine) {
         String lowerCaseInput = inputLine.toLowerCase().trim();
-        return lowerCaseInput.equals("#exit");
+        return lowerCaseInput.equals(EXIT);
     }
 
     private boolean isQuit(String inputLine) {
         String lowerCaseInput = inputLine.toLowerCase().trim();
-        return lowerCaseInput.equals("#quit") || lowerCaseInput.equals("bye");
+        return lowerCaseInput.equals(QUIT) || lowerCaseInput.equals(BYE);
     }
 }

@@ -1,4 +1,4 @@
-package org.taranix.cli.simon.commands;
+package org.taranix.cli.simon.gemini.commands;
 
 import com.google.genai.Chat;
 import com.google.genai.Client;
@@ -9,10 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.taranix.cafe.beans.annotations.CafeInject;
 import org.taranix.cafe.shell.annotations.CafeCommand;
 import org.taranix.cafe.shell.annotations.CafeCommandRun;
-import org.taranix.cli.simon.ai.GeminiResponse;
-import org.taranix.cli.simon.services.ConsoleHandler;
+import org.taranix.cli.simon.console.CafeConsoleTextColour;
+import org.taranix.cli.simon.console.ConsoleInterpreter;
+import org.taranix.cli.simon.gemini.GeminiResponse;
 import org.taranix.cli.simon.services.MimeTypeService;
-import org.taranix.cli.simon.utils.CafeConsoleTextColour;
 import org.taranix.cli.simon.variables.ModelAiVariable;
 
 import java.io.FileOutputStream;
@@ -23,10 +23,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
-@CafeCommand(command = "c",
-        longCommand = "chat",
-        description = "Open chat with AI in interactive mode")
-class ChatAICommand {
+@CafeCommand(command = "gc",
+        longCommand = "gemini-chat",
+        description = "Open Gemini chat")
+class GeminiChatCommand {
 
     @CafeInject
     private Client client;
@@ -39,10 +39,10 @@ class ChatAICommand {
         Chat chat = client.chats.create(modelAiVariable.get(), GenerateContentConfig.builder()
                 .responseModalities(List.of("TEXT"))
                 .build());
-        ConsoleHandler consoleHandler = new ConsoleHandler();
+        ConsoleInterpreter consoleInterpreter = new ConsoleInterpreter();
 
         while (true) {
-            String input = consoleHandler.read();
+            String input = consoleInterpreter.read();
             if (input == null) {
                 break;
             }

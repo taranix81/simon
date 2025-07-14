@@ -7,7 +7,7 @@ public class MimeTypeService {
 
     public String getFileExtensionFromMimeType(String mimeType) {
         if (mimeType == null || mimeType.isEmpty()) {
-            return "bin"; // Domyślne dla nieznanych typów
+            return "bin";
         }
         switch (mimeType.toLowerCase()) {
             case "image/jpeg":

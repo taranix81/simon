@@ -1,4 +1,4 @@
-package org.taranix.cli.simon.services;
+package org.taranix.cli.simon.gemini;
 
 import lombok.extern.slf4j.Slf4j;
 
