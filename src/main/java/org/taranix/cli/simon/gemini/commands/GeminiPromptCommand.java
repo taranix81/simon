@@ -15,6 +15,7 @@ import org.taranix.cli.simon.gemini.GeminiResponse;
 import org.taranix.cli.simon.variables.LocalFileVariable;
 import org.taranix.cli.simon.variables.ModelAiVariable;
 import org.taranix.cli.simon.variables.TemperatureVariable;
+import org.taranix.cli.simon.variables.TokenOutputVariable;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -36,16 +37,16 @@ class GeminiPromptCommand {
     void execute(CafeCommandArguments arguments,
                  ModelAiVariable modelAiVariable,
                  List<LocalFileVariable> localFileVariables,
-                 TemperatureVariable temperatureVariable
+                 TemperatureVariable temperatureVariable,
+                 TokenOutputVariable tokenOutputVariable
     ) {
-        if (arguments.getCliValues().length != 0) {
-            String prompt = arguments.getCliValues()[0];
-            List<Content> contents = createContent(prompt, localFileVariables);
-            GenerateContentResponse r = client.models.generateContent(modelAiVariable.get(), contents, generationConfig(temperatureVariable));
-            GeminiResponse response = new GeminiResponse(r);
-            System.out.println(response.integratedText());
 
-        }
+        String prompt = arguments.getCliValues()[0];
+        List<Content> contents = createContent(prompt, localFileVariables);
+        GenerateContentConfig config = generationConfig(temperatureVariable, tokenOutputVariable);
+        GenerateContentResponse r = client.models.generateContent(modelAiVariable.get(), contents, config);
+        GeminiResponse response = new GeminiResponse(r);
+        System.out.println(response.integratedText());
         client.close();
     }
 
@@ -64,11 +65,11 @@ class GeminiPromptCommand {
         return List.of(Content.fromParts(parts.toArray(new Part[]{})));
     }
 
-    private GenerateContentConfig generationConfig(TemperatureVariable temperatureVariable) {
+    private GenerateContentConfig generationConfig(TemperatureVariable temperatureVariable, TokenOutputVariable tokenOutputVariable) {
         return GenerateContentConfig.builder()
                 .temperature(temperatureVariable.get())
                 .candidateCount(1)
-//                .maxOutputTokens(500)      // Maksymalna liczba tokenów w odpowiedzi
+                .maxOutputTokens(tokenOutputVariable.get())
 //                .topP(0.8f)                // Próbkowanie Top-P
 //                .topK(40f)                  // Próbkowanie Top-K
                 .build();
