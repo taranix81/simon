@@ -1,0 +1,12 @@
+gemini-pro
+gemini-ultra
+gemini-nano-1
+gemini-nano-2
+gemini-1.5-pro
+gemini-1.5-flash
+text-bison
+chat-bison
+text-embedding-004
+code-bison
+code-gecko
+imagen

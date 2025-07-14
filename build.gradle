@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+    id 'application'
+    id("io.freefair.lombok") version "8.14"
+}
+
+group 'org.taranix.cli'
+version '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+application {
+    mainClassName = 'org.taranix.cli.simon.Application'
+}
+
+jar {
+    archiveFileName = "simon.jar"
+    manifest {
+        attributes 'Main-Class': application.mainClassName
+    }
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation 'org.taranix.cafe:cafe-shell:0.0.4-SNAPSHOT'
+    implementation 'com.google.genai:google-genai:1.0.0'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    testImplementation 'org.assertj:assertj-core:3.27.2'
+}
