@@ -2,10 +2,14 @@ package org.taranix.cli.simon.services;
 
 import org.taranix.cafe.beans.annotations.CafeService;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 @CafeService
 public class MimeTypeService {
 
-    public String getFileExtensionFromMimeType(String mimeType) {
+    public String extensionByMimeType(String mimeType) {
         if (mimeType == null || mimeType.isEmpty()) {
             return "bin";
         }
@@ -35,6 +39,14 @@ public class MimeTypeService {
                     return mimeType.substring(slashIndex + 1);
                 }
                 return "bin";
+        }
+    }
+
+    public String mimeType(Path path) {
+        try {
+            return Files.probeContentType(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

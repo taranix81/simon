@@ -1,16 +1,20 @@
-package org.taranix.cli.simon.gemini;
+package org.taranix.cli.simon.services;
 
 import com.google.genai.Client;
 import org.taranix.cafe.beans.annotations.CafeFactory;
 import org.taranix.cafe.beans.annotations.CafeProperty;
 import org.taranix.cafe.beans.annotations.CafeProvider;
-import org.taranix.cli.simon.variables.ModelAiVariable;
+import org.taranix.cli.simon.variables.GeminiModelVariable;
 
 @CafeFactory
 class GeminiConfiguration {
 
-    @CafeProperty(name = "apikey")
+    @CafeProperty(name = "gemini.apikey")
     private String apiKey;
+
+    @CafeProperty(name = "gemini.default.model")
+    private String defaultModel;
+
 
     @CafeProvider
     Client geminiClient() {
@@ -18,8 +22,8 @@ class GeminiConfiguration {
     }
 
     @CafeProvider
-    ModelAiVariable geminiDefaultModelAI() {
-        return ModelAiVariable.asDefault("gemini-2.5-flash");
+    GeminiModelVariable geminiDefaultModelAI() {
+        return GeminiModelVariable.asDefault(defaultModel);
     }
 
 

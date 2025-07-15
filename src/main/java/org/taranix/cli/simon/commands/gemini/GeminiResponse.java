@@ -1,4 +1,4 @@
-package org.taranix.cli.simon.gemini;
+package org.taranix.cli.simon.commands.gemini;
 
 
 import com.google.genai.types.*;

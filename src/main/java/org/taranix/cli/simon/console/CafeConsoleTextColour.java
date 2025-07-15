@@ -9,7 +9,8 @@ public enum CafeConsoleTextColour {
     BLUE("\u001b[34m"),
     PURPLE("\u001b[35m"),
     CYAN("\u001b[36m"),
-    WHITE("\u001b[37m");
+    WHITE("\u001b[37m"),
+    RESET("\u001B[0m");
 
     private final String ansiColour;
 

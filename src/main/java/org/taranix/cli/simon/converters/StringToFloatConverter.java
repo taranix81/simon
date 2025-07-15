@@ -1,4 +1,4 @@
-package org.taranix.cli.simon.common;
+package org.taranix.cli.simon.converters;
 
 import org.taranix.cafe.beans.annotations.CafeService;
 import org.taranix.cafe.beans.converters.CafeConverter;

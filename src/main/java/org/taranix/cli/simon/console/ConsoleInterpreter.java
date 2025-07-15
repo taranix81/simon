@@ -7,15 +7,18 @@ import java.io.Console;
 
 public class ConsoleInterpreter {
 
-
     public static final String PROMPT_LINE = ">> ";
-
     public static final String MULTI_LINE_BLOCK_MODE = "#multi";
     public static final String NEW_LINE = "\n";
     public static final String EXIT = "#exit";
     public static final String QUIT = "#quit";
     public static final String BYE = "bye";
     private static final String HELP = "#help";
+    private final DecoratedConsolePrinter decoratedConsolePrinter;
+
+    public ConsoleInterpreter(DecoratedConsolePrinter decoratedConsolePrinter) {
+        this.decoratedConsolePrinter = decoratedConsolePrinter;
+    }
 
 
     private String readBlock(Console console) {
@@ -36,7 +39,7 @@ public class ConsoleInterpreter {
     }
 
     private String readLine(Console console, String prompt) {
-        System.out.print(CafeConsoleTextColour.YELLOW.getAnsiColour() + prompt);
+        decoratedConsolePrinter.printPrompt(prompt);
         return console.readLine();
 
     }
@@ -70,7 +73,7 @@ public class ConsoleInterpreter {
         sb.append(EXIT + ": Exit from multi line mode" + NEW_LINE);
         sb.append(NEW_LINE);
         sb.append(NEW_LINE);
-        System.out.println(sb);
+        decoratedConsolePrinter.printHelp(sb.toString());
     }
 
     private boolean isHelp(String inputLine) {

@@ -1,4 +1,4 @@
-package org.taranix.cli.simon.auxiliary;
+package org.taranix.cli.simon.commands.auxiliary;
 
 
 import org.taranix.cafe.shell.annotations.CafeCommand;
