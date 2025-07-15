@@ -29,4 +29,10 @@ public class DecoratedConsolePrinter {
     public void reset() {
         setColor(CafeConsoleTextColour.RESET);
     }
+
+    public void printError(Exception e) {
+        setColor(CafeConsoleTextColour.RED);
+        System.out.println(e.getMessage() + ":" + e.getCause());
+        reset();
+    }
 }

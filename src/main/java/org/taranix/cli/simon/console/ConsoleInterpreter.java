@@ -12,7 +12,7 @@ public class ConsoleInterpreter {
     public static final String NEW_LINE = "\n";
     public static final String EXIT = "#exit";
     public static final String QUIT = "#quit";
-    public static final String BYE = "bye";
+    public static final String BYE = "#bye";
     private static final String HELP = "#help";
     private final DecoratedConsolePrinter decoratedConsolePrinter;
 
@@ -49,6 +49,7 @@ public class ConsoleInterpreter {
         String inputLine = readLine(console, PROMPT_LINE);
 
         if (isQuit(inputLine)) {
+            decoratedConsolePrinter.reset();
             return null;
         }
 
@@ -65,15 +66,14 @@ public class ConsoleInterpreter {
     }
 
     private void printHelp() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(NEW_LINE);
-        sb.append(CafeConsoleTextColour.YELLOW.getAnsiColour());
-        sb.append(HELP + ": Print Help" + NEW_LINE);
-        sb.append(MULTI_LINE_BLOCK_MODE + ": Enter into multi line mode" + NEW_LINE);
-        sb.append(EXIT + ": Exit from multi line mode" + NEW_LINE);
-        sb.append(NEW_LINE);
-        sb.append(NEW_LINE);
-        decoratedConsolePrinter.printHelp(sb.toString());
+        String helpContent = NEW_LINE +
+                HELP + ": Print Help" + NEW_LINE +
+                MULTI_LINE_BLOCK_MODE + ": Enter into multi line mode" + NEW_LINE +
+                EXIT + ": Exit from multi line mode" + NEW_LINE +
+                BYE + ": Quit chat" + NEW_LINE +
+                QUIT + ": Quit chat" + NEW_LINE;
+
+        decoratedConsolePrinter.printHelp(helpContent);
     }
 
     private boolean isHelp(String inputLine) {

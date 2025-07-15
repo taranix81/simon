@@ -64,7 +64,7 @@ class GeminiChatCommand extends GeminiBase {
 
     private void queryAI(Chat chat, String inputLine, TemperatureVariable temperatureVariable,
                          TokenOutputVariable tokenOutputVariable) {
-        decoratedConsolePrinter.printAiResponse("[AI] : ");
+        decoratedConsolePrinter.printAiResponse("Gemini : ");
         Content content = createContent(inputLine, List.of());
         GenerateContentConfig config = generationConfig(temperatureVariable, tokenOutputVariable);
         GenerateContentResponse response = chat.sendMessage(content, config);
@@ -72,7 +72,7 @@ class GeminiChatCommand extends GeminiBase {
 
         decoratedConsolePrinter.printAiResponse(geminiResponse.integratedText());
         log.info("User: {}", inputLine);
-        log.info("AI: {}", geminiResponse.integratedText());
+        log.info("Gemini AI: {}", geminiResponse.integratedText());
 
         geminiResponse.blobs().forEach(this::save);
     }
