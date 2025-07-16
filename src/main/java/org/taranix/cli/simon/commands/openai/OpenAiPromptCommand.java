@@ -8,7 +8,6 @@ import org.taranix.cafe.beans.annotations.CafeInject;
 import org.taranix.cafe.shell.annotations.CafeCommand;
 import org.taranix.cafe.shell.annotations.CafeCommandRun;
 import org.taranix.cafe.shell.commands.CafeCommandArguments;
-import org.taranix.cli.simon.console.DecoratedConsolePrinter;
 
 import java.util.List;
 
@@ -20,9 +19,6 @@ class OpenAiPromptCommand {
 
     @CafeInject
     OpenAiService service;
-
-    @CafeInject
-    private DecoratedConsolePrinter decoratedConsolePrinter;
 
     @CafeCommandRun
     void execute(CafeCommandArguments arguments) {
@@ -39,9 +35,8 @@ class OpenAiPromptCommand {
 
         try {
             List<ChatCompletionChoice> choices = service.createChatCompletion(request).getChoices();
-            decoratedConsolePrinter.printAiResponse(choices.get(0).getMessage().getContent());
         } catch (Exception e) {
-            decoratedConsolePrinter.printError(e);
+            e.printStackTrace();
         }
     }
 }

@@ -1,4 +1,4 @@
-package org.taranix.cli.simon.services;
+package org.taranix.cli.simon.factories;
 
 import org.taranix.cafe.beans.annotations.CafeFactory;
 import org.taranix.cafe.beans.annotations.CafeProperty;
@@ -7,7 +7,7 @@ import org.taranix.cli.simon.variables.TemperatureVariable;
 import org.taranix.cli.simon.variables.TokenOutputVariable;
 
 @CafeFactory
-class DefaultExecutionVariablesFactory {
+class DefaultVariablesFactory {
 
     @CafeProperty(name = "ai.output.token")
     private Integer maxTokenOutput;

@@ -16,12 +16,16 @@
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
     </appender>
 
-    <root level="INFO">
+    <logger name="org.taranix.cli.simon.api" level="INFO" additivity="false">
         <appender-ref ref="FILE"/>
-    </root>
-    <root level="ERROR">
+    </logger>
+
+    <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>
 

@@ -1,19 +1,17 @@
 package org.taranix.cli.simon.commands.gemini;
 
-import com.google.genai.Client;
-import com.google.genai.types.Content;
-import com.google.genai.types.GenerateContentConfig;
-import com.google.genai.types.GenerateContentResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.taranix.cafe.beans.annotations.CafeInject;
 import org.taranix.cafe.shell.annotations.CafeCommand;
 import org.taranix.cafe.shell.annotations.CafeCommandRun;
 import org.taranix.cafe.shell.commands.CafeCommandArguments;
-import org.taranix.cli.simon.console.DecoratedConsolePrinter;
+import org.taranix.cli.simon.api.GeminiApi;
+import org.taranix.cli.simon.console.ConsoleColourDecorator;
+import org.taranix.cli.simon.model.AIResponse;
+import org.taranix.cli.simon.model.UserPrompt;
+import org.taranix.cli.simon.variables.CommandVariable;
 import org.taranix.cli.simon.variables.GeminiModelVariable;
 import org.taranix.cli.simon.variables.LocalFileVariable;
-import org.taranix.cli.simon.variables.TemperatureVariable;
-import org.taranix.cli.simon.variables.TokenOutputVariable;
 
 import java.util.List;
 
@@ -22,29 +20,35 @@ import java.util.List;
         description = "Send prompt to gemini",
         noOfArgs = 1)
 @Slf4j
-class GeminiPromptCommand extends GeminiBase {
+class GeminiPromptCommand {
     @CafeInject
-    private Client client;
-
-    @CafeInject
-    private DecoratedConsolePrinter decoratedConsolePrinter;
+    private GeminiApi geminiApi;
 
     @CafeCommandRun
     void execute(CafeCommandArguments arguments,
                  GeminiModelVariable geminiModelVariable,
-                 List<LocalFileVariable> localFileVariables,
-                 TemperatureVariable temperatureVariable,
-                 TokenOutputVariable tokenOutputVariable
-    ) {
+                 List<LocalFileVariable> localFileVariables) {
 
-        String prompt = arguments.getCliValues()[0];
-        Content content = createContent(prompt, localFileVariables);
-        GenerateContentConfig config = generationConfig(temperatureVariable, tokenOutputVariable);
-        GenerateContentResponse r = client.models.generateContent(geminiModelVariable.get(), content, config);
-        GeminiResponse response = new GeminiResponse(r);
-        decoratedConsolePrinter.printAiResponse(response.integratedText());
-        client.close();
+        UserPrompt userPrompt = UserPrompt.builder()
+                .text(arguments.getCliValues()[0])
+                .files(localFileVariables.stream()
+                        .filter(localFileVariable -> !localFileVariable.isDefault())
+                        .map(CommandVariable::get)
+                        .toList()
+                )
+                .build();
+        ConsoleColourDecorator.setGeneratedContentColor();
+        System.out.println("[Gemini Response]");
+        AIResponse response = geminiApi.generateContent(userPrompt, geminiModelVariable.get());
+        System.out.println(response.getText());
+        ConsoleColourDecorator.resetConsoleColour();
+        saveAttachments(response);
+
+        geminiApi.close();
     }
 
+    private void saveAttachments(AIResponse response) {
+        //TODO : not implemented yet
+    }
 
 }

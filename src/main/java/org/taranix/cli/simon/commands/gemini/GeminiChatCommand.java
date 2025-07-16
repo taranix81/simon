@@ -1,102 +1,69 @@
 package org.taranix.cli.simon.commands.gemini;
 
-import com.google.genai.Chat;
-import com.google.genai.Client;
-import com.google.genai.types.Blob;
-import com.google.genai.types.Content;
-import com.google.genai.types.GenerateContentConfig;
-import com.google.genai.types.GenerateContentResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.taranix.cafe.beans.annotations.CafeInject;
 import org.taranix.cafe.shell.annotations.CafeCommand;
 import org.taranix.cafe.shell.annotations.CafeCommandRun;
-import org.taranix.cli.simon.console.ConsoleInterpreter;
-import org.taranix.cli.simon.console.DecoratedConsolePrinter;
+import org.taranix.cli.simon.api.GeminiApi;
+import org.taranix.cli.simon.console.ConsoleColourDecorator;
+import org.taranix.cli.simon.console.interpreter.ConsoleReader;
+import org.taranix.cli.simon.exceptions.ConsoleInterpreterException;
+import org.taranix.cli.simon.model.AIResponse;
+import org.taranix.cli.simon.model.UserPrompt;
 import org.taranix.cli.simon.services.MimeTypeService;
-import org.taranix.cli.simon.variables.GeminiModelVariable;
-import org.taranix.cli.simon.variables.TemperatureVariable;
-import org.taranix.cli.simon.variables.TokenOutputVariable;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.UUID;
+import java.io.Console;
 
 @Slf4j
 @CafeCommand(command = "gc",
         longCommand = "gemini-chat",
         description = "Open Gemini chat")
-class GeminiChatCommand extends GeminiBase {
+class GeminiChatCommand {
 
     @CafeInject
-    private Client client;
+    private GeminiApi geminiApi;
 
-    @CafeInject
-    private DecoratedConsolePrinter decoratedConsolePrinter;
 
     @CafeInject
     private MimeTypeService mimeTypeService;
 
+    @CafeInject
+    private ConsoleReader consoleReader;
+
+    private
+
     @CafeCommandRun
-    void execute(GeminiModelVariable geminiModelVariable,
-                 TemperatureVariable temperatureVariable,
-                 TokenOutputVariable tokenOutputVariable) {
-        Chat chat = client.chats.create(geminiModelVariable.get(), GenerateContentConfig.builder()
-                .responseModalities(List.of("TEXT"))
-                .build());
-        ConsoleInterpreter consoleInterpreter = new ConsoleInterpreter(decoratedConsolePrinter);
+    void execute() {
+        Console console = getConsole();
 
         while (true) {
-            String input = consoleInterpreter.read();
+            UserPrompt input = consoleReader.get(console);
             if (input == null) {
                 break;
             }
 
             if (!input.isEmpty()) {
-                queryAI(chat, input, temperatureVariable, tokenOutputVariable);
-            }
-
-        }
-    }
-
-
-    private void queryAI(Chat chat, String inputLine, TemperatureVariable temperatureVariable,
-                         TokenOutputVariable tokenOutputVariable) {
-        decoratedConsolePrinter.printAiResponse("Gemini : ");
-        Content content = createContent(inputLine, List.of());
-        GenerateContentConfig config = generationConfig(temperatureVariable, tokenOutputVariable);
-        GenerateContentResponse response = chat.sendMessage(content, config);
-        GeminiResponse geminiResponse = new GeminiResponse(response);
-
-        decoratedConsolePrinter.printAiResponse(geminiResponse.integratedText());
-        log.info("User: {}", inputLine);
-        log.info("Gemini AI: {}", geminiResponse.integratedText());
-
-        geminiResponse.blobs().forEach(this::save);
-    }
-
-    private void save(Blob blob) {
-        String mimeType = blob.mimeType().orElse(null);
-        byte[] data = blob.data().orElse(null);
-
-        if (data == null) {
-            log.warn("No data to write");
-        } else {
-            String fileExtension = mimeTypeService.extensionByMimeType(mimeType);
-            String fileName = "gemini_output_" + UUID.randomUUID() + "." + fileExtension;
-            Path filePath = Paths.get(fileName);
-
-            try (FileOutputStream outputStream = new FileOutputStream(filePath.toFile())) {
-                outputStream.write(data);
-                System.out.println("Saved " + filePath);
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
+                ConsoleColourDecorator.setGeneratedContentColor();
+                System.out.println("[Gemini Response]");
+                AIResponse response = geminiApi.sendMessage(input);
+                System.out.println(response.getText());
+                saveAttachments(response);
+                ConsoleColourDecorator.resetConsoleColour();
             }
         }
+        geminiApi.close();
     }
 
+    private void saveAttachments(AIResponse response) {
+        //TODO : not implemented yet
+    }
 
+    private Console getConsole() {
+        Console console = System.console();
+        if (console == null) {
+            throw new ConsoleInterpreterException("Console access denied. Try running from the command line.");
+        }
+        return console;
+    }
 }
 

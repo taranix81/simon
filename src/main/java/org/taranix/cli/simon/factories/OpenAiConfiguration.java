@@ -1,4 +1,4 @@
-package org.taranix.cli.simon.services;
+package org.taranix.cli.simon.factories;
 
 import com.theokanning.openai.service.OpenAiService;
 import org.taranix.cafe.beans.annotations.CafeFactory;

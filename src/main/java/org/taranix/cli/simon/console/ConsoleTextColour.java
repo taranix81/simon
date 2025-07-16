@@ -1,6 +1,6 @@
 package org.taranix.cli.simon.console;
 
-public enum CafeConsoleTextColour {
+public enum ConsoleTextColour {
     NONE(""),
     BLACK("\u001b[30m"),
     RED("\u001b[31m"),
@@ -14,7 +14,7 @@ public enum CafeConsoleTextColour {
 
     private final String ansiColour;
 
-    private CafeConsoleTextColour(String ansiColour) {
+    private ConsoleTextColour(String ansiColour) {
         this.ansiColour = ansiColour;
     }
 
