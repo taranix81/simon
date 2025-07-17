@@ -13,7 +13,7 @@ import org.taranix.cafe.beans.annotations.CafeService;
 import org.taranix.cli.simon.model.AIResponse;
 import org.taranix.cli.simon.model.UserPrompt;
 import org.taranix.cli.simon.services.MimeTypeService;
-import org.taranix.cli.simon.services.PathService;
+import org.taranix.cli.simon.services.ResourceService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class GeminiApi {
     private GenerateContentConfig config;
 
     @CafeInject
-    private PathService pathService;
+    private ResourceService resourceService;
 
     @CafeInject
     private MimeTypeService mimeTypeService;
@@ -69,7 +69,7 @@ public class GeminiApi {
 
         }
 
-        userPrompt.getFiles().forEach(path -> parts.add(Part.fromBytes(pathService.read(path), mimeTypeService.mimeType(path))));
+        userPrompt.getFiles().forEach(path -> parts.add(Part.fromBytes(resourceService.fromPath(path), mimeTypeService.mimeType(path))));
         userPrompt.getResources().forEach(uri -> parts.add(Part.fromUri(uri.toString(), "")));
         return Content.fromParts(parts.toArray(new Part[]{}));
     }
